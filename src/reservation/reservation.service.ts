@@ -53,4 +53,25 @@ export class ReservationService {
 
     return reservationsCount > 5 ? 'reservation is on the waiting list' : 'reservation is confirmed';
   }
+
+  async confirm(reservationId: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: {
+        id: reservationId
+      }
+    });
+
+    if(!reservation) {
+      throw new NotFoundException('예약 정보가 유효하지 않습니다.');
+    }
+
+    if(reservation.isConfirmed) {
+      throw new ConflictException('이미 확정된 예약입니다.');
+    }
+
+    reservation.isConfirmed = true;
+    await this.reservationRepository.save(reservation);
+
+    return 'reservation is confirmed';
+  }
 }

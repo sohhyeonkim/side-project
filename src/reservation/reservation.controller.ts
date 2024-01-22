@@ -17,4 +17,13 @@ export class ReservationController {
       throw error;
     }
   }
+
+  @Patch(':reservationId')
+  update(@Param('reservationId') reservationId: string) {
+    try{
+      return this.reservationService.confirm(+reservationId);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

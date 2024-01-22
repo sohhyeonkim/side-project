@@ -25,7 +25,7 @@ export class UserController {
     try {
       const user = await this.userService.verifyUser(body);
      
-      const {accessToken}: Token = this.authService.createToken({id: user.id, email: user.email});
+      const {accessToken}: Token = this.authService.createToken({id: user.id, email: user.email, role: user.role});
       res.setHeader('Authorization', `Bearer ${accessToken}`);
       res.status(200).send({accessToken});
     }

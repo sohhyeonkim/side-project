@@ -12,5 +12,5 @@ export class Reservation extends CommonEntity{
     user: User;
 
     @Column()
-    date: string;
+    reservedDate: string;
 }

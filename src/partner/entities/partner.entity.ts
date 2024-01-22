@@ -21,6 +21,9 @@ export class Partner extends CommonEntity {
     @Column()
     email: string;  
 
+    @Column()
+    password: string;
+
     @Column({type: 'enum', enum: Continent})
     continent: Continent;
 

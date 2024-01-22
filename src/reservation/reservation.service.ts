@@ -1,26 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Reservation } from './entities/reservation.entity';
+import { Repository } from 'typeorm';
+import { User } from '../user/entities/user.entity';
+import { Tour } from '../tour/entities/tour.entity';
 
 @Injectable()
 export class ReservationService {
-  create(createReservationDto: CreateReservationDto) {
-    return 'This action adds a new reservation';
-  }
+  constructor(
+    @InjectRepository(Reservation)
+    private reservationRepository: Repository<Reservation>,
 
-  findAll() {
-    return `This action returns all reservation`;
-  }
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
-  }
+    @InjectRepository(Tour)
+    private tourRepository: Repository<Tour>,
+  ) {}
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    return `This action updates a #${id} reservation`;
-  }
+  async reserve(createReservationDto: CreateReservationDto) {
+    const reservationsCount = await this.reservationRepository.createQueryBuilder('reservation')
+      .where('reservation.tourId = :tourId', { tourId: createReservationDto.tourId })
+      .andWhere('reservation.reservedDate = :reservedDate', { reservedDate: createReservationDto.reservedDate })
+      .getCount();
+    
+    const reservation = new Reservation();
+    const user = await this.userRepository.findOne({
+      where: {
+        id: createReservationDto.userId
+      }
+    });
+    const tour = await this.tourRepository.findOne({
+      where: {
+        id: createReservationDto.tourId
+      }
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+    if(!user || !tour) {
+      throw new NotFoundException('유저 및 투어 정보가 유효하지 않습니다.');
+    }
+    reservation.reservedDate = createReservationDto.reservedDate;
+    reservation.tour = tour
+    reservation.user = user;
+
+    if(reservationsCount > 5) {
+      reservation.isConfirmed = false;
+    }
+
+    await this.reservationRepository.save(reservation);
+
+    return reservationsCount > 5 ? 'reservation is on the waiting list' : 'reservation is confirmed';
   }
 }

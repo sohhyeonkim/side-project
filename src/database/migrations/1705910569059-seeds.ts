@@ -79,6 +79,7 @@ export class Seeds1705910569059 implements MigrationInterface {
             r.reservedDate = moment().add(idx, 'days').format('YYYY-MM-DD');
             r.tour = savedTours[idx];
             r.user = savedUsers[idx];
+            r.isConfirmed = true;
             return r;
         });
 

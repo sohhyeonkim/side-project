@@ -13,4 +13,9 @@ export class Reservation extends CommonEntity{
 
     @Column()
     reservedDate: string;
+
+    @Column({
+        default: false
+    })
+    isConfirmed: boolean;
 }

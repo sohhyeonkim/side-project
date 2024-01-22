@@ -6,6 +6,7 @@ import { Reservation } from "../../reservation/entities/reservation.entity";
 @Entity()
 export class User extends CommonEntity{
     @Unique('email', ['email'])
+    
     @Column()
     email: string;
 

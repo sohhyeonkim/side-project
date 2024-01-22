@@ -24,5 +24,4 @@ export class Mg1705904829397 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE \`reservation\``);
         await queryRunner.query(`DROP TABLE \`tour\``);
     }
-
 }

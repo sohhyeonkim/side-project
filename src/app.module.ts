@@ -10,6 +10,7 @@ import { User } from './user/entities/user.entity';
 import { Reservation } from './reservation/entities/reservation.entity';
 import { Tour } from './tour/entities/tour.entity';
 import { Partner } from './partner/entities/partner.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { Partner } from './partner/entities/partner.entity';
     UserModule,
     TourModule,
     PartnerModule,
-    ReservationModule,],
+    ReservationModule,
+    AuthModule,],
   controllers: [],
   providers: [],
 })

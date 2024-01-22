@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { AuthService } from '../auth/auth.service';
+import { Token } from '../auth/dto/create-token.dto';
+import { Request, Response } from 'express';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService
+  ) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post('signup')
+  signIn(@Body() body: CreateUserDto) {
+    return this.userService.create(body);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Post('login')
+  async logIn(@Body() body: LoginUserDto, @Res() res: Response) {
+    try {
+      const user = await this.userService.verifyUser(body);
+     
+      const {accessToken}: Token = this.authService.createToken({id: user.id, email: user.email});
+      res.setHeader('Authorization', `Bearer ${accessToken}`);
+      res.status(200).send({accessToken});
+    }
+    catch(err) {
+      console.log(err);
+    }
   }
 }

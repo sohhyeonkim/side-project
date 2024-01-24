@@ -33,6 +33,8 @@ export class UserController {
       const {accessToken}: Token = this.authService.createToken({id: user.id, email: user.email, role: user.role});
       res.setHeader('Authorization', `Bearer ${accessToken}`);
       res.status(200).send({accessToken});
+
+      res.send('로그인 성공');
     }
     catch(err) {
       console.error(err);

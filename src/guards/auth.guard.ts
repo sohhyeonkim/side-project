@@ -2,11 +2,14 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { JwtService } from "@nestjs/jwt";
 import { CreateTokenDto, VerifiedToken } from "../auth/dto/create-token.dto";
 import { Request } from 'express';
+import { Reflector } from "@nestjs/core";
+import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
+    private reflector: Reflector
   ) {}
   async canActivate(
     context: ExecutionContext,
@@ -14,6 +17,15 @@ export class AuthGuard implements CanActivate {
     try {
         console.log('authguard working');
         const request = context.switchToHttp().getRequest();
+
+        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+          context.getHandler(),
+          context.getClass(),
+        ]);
+        
+        if (isPublic) {
+          return true;
+        }
 
         const token: string | undefined = this.extractTokenFromHeader(request);
       

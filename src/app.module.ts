@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { DataSource } from 'typeorm';
 import { UserModule } from './user/user.module';
 import { TourModule } from './tour/tour.module';
 import { PartnerModule } from './partner/partner.module';
@@ -11,6 +10,8 @@ import { Reservation } from './reservation/entities/reservation.entity';
 import { Tour } from './tour/entities/tour.entity';
 import { Partner } from './partner/entities/partner.entity';
 import { AuthModule } from './auth/auth.module';
+import { AuthGuard } from './guards/auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [

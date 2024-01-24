@@ -1,11 +1,8 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthService } from '../auth/auth.service';
-import { Token } from '../auth/dto/create-token.dto';
-import { Request, Response } from 'express';
+import { Public } from '../decorators/public.decorator';
 
 @ApiTags('user')
 @Controller('user')
@@ -14,6 +11,7 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
+  @Public()
   @Post('signup')
   signIn(@Body() body: CreateUserDto) {
     try {

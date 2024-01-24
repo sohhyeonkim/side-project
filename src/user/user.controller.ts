@@ -17,7 +17,12 @@ export class UserController {
 
   @Post('signup')
   signIn(@Body() body: CreateUserDto) {
-    return this.userService.create(body);
+    try {
+      return this.userService.create(body);
+    } catch(err) {
+      console.error(err);
+      throw err;
+    }
   }
 
   @Post('login')
@@ -30,7 +35,8 @@ export class UserController {
       res.status(200).send({accessToken});
     }
     catch(err) {
-      console.log(err);
+      console.error(err);
+      throw err;
     }
   }
 }

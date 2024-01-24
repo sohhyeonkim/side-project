@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +18,14 @@ export class UserService {
     const {password, ...rest} = createUserDto;
     const hassedPassword = await hashPassword(password);
 
+    const isUserExists = await this.userRepository.findOne({
+      where: {email: createUserDto.email}
+    });
+
+    if(isUserExists) {
+      throw new ConflictException('이미 가입된 유저입니다.');
+    }
+    
     user = {...user, ...rest, password: hassedPassword };
     return this.userRepository.save(user);
   }

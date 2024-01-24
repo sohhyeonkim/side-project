@@ -8,8 +8,8 @@ export class PartnerController {
   constructor(private readonly partnerService: PartnerService) {}
 
   @Post()
-  create(@Body() createPartnerDto: CreatePartnerDto) {
-    return this.partnerService.create(createPartnerDto);
+  create(@Body() body: CreatePartnerDto) {
+    return this.partnerService.register(body);
   }
 
   @Get()

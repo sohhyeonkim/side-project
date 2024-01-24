@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Partner } from './entities/partner.entity';
 
 @Injectable()
 export class PartnerService {
-  create(createPartnerDto: CreatePartnerDto) {
+  constructor(
+    @InjectRepository(Partner)
+    private partnerRepository: Repository<Partner>,
+  ){}
+  register(createPartnerDto: CreatePartnerDto) {
     return 'This action adds a new partner';
   }
 

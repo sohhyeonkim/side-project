@@ -9,3 +9,8 @@ export class CreateTokenDto {
 export class Token {
     accessToken: string;
 }
+
+export interface VerifiedToken extends CreateTokenDto {
+    iat: number;
+    exp: number;
+}

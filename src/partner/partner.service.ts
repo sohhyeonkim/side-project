@@ -32,19 +32,11 @@ export class PartnerService {
     return this.partnerRepository.save(partner);
   }
 
-  async verifyUser(args: LoginUserDto){
+  async findOneByEmail(email: string){
     const partner = await this.partnerRepository.findOne({
-      where: {email: args.email}
+      where: {email}
     });
 
-    if(!partner) {
-      throw new NotFoundException('파트너가 존재하지 않습니다.');
-    }
-
-    const isPasswordCorrect = await comparePassword(args.password, partner.password);
-    if(!isPasswordCorrect) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.')
-    }
     return partner;
   }
 }

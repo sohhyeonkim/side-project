@@ -30,17 +30,11 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async verifyUser(args: LoginUserDto) {
+  async findOneByEmail(email: string) {
     const user = await this.userRepository.findOne({
-      where: {email: args.email}
+      where: {email}
     });
-    if(!user) {
-      throw new NotFoundException('유저가 존재하지 않습니다.');
-    }
-    const isPasswordCorrect = await comparePassword(args.password, user.password);
-    if(!isPasswordCorrect) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.')
-    }
+
     return user;
   }
 }

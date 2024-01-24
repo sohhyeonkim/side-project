@@ -18,4 +18,9 @@ export class Reservation extends CommonEntity{
         default: false
     })
     isConfirmed: boolean;
+
+    @Column({
+        default: false
+    })
+    isCanceled: boolean;
 }

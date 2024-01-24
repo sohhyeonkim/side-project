@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreatePartnerDto } from './dto/create-partner.dto';
-import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Partner } from './entities/partner.entity';
+import { hashPassword } from '../common/hash-password';
 
 @Injectable()
 export class PartnerService {
@@ -11,23 +11,23 @@ export class PartnerService {
     @InjectRepository(Partner)
     private partnerRepository: Repository<Partner>,
   ){}
-  register(createPartnerDto: CreatePartnerDto) {
-    return 'This action adds a new partner';
-  }
 
-  findAll() {
-    return `This action returns all partner`;
-  }
 
-  findOne(id: number) {
-    return `This action returns a #${id} partner`;
-  }
+  async create(createPartnerDto: CreatePartnerDto) {
+    let partner = new Partner();
+    const {password, ...rest} = createPartnerDto;
 
-  update(id: number, updatePartnerDto: UpdatePartnerDto) {
-    return `This action updates a #${id} partner`;
-  }
+    const isPartnerExists = await this.partnerRepository.findOne({
+      where: {countryCode: createPartnerDto.countryCode, phoneNumber: createPartnerDto.phoneNumber}
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} partner`;
+    if(isPartnerExists) {
+      throw new ConflictException('이미 가입된 파트너입니다.');
+    };
+
+    const hashedPassword = await hashPassword(password);
+    partner = {...partner, ...rest, password: hashedPassword };
+
+    return this.partnerRepository.save(partner);
   }
 }

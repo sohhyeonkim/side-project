@@ -1,12 +1,11 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { CommonEntity } from "../../common/common.entity";
 import { Role } from "../../common/role.type";
 import { Reservation } from "../../reservation/entities/reservation.entity";
 
 @Entity()
+@Index(["email"], { unique: true })
 export class User extends CommonEntity{
-    @Unique('email', ['email'])
-    
     @Column()
     email: string;
 
